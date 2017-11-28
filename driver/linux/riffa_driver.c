@@ -443,8 +443,10 @@ static inline struct sg_mapping * fill_sg_buf(struct fpga_state * sc, int chnl,
 		down_read(&current->mm->mmap_sem);
 		#if LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0)
 		num_pages = get_user_pages(current, current->mm, udata, num_pages_reqd, 1, 0, pages, NULL);
-		#else
+		#elif LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0)
 		num_pages = get_user_pages(udata, num_pages_reqd, 1, 0, pages, NULL);
+		#else
+		num_pages = get_user_pages(udata, num_pages_reqd, FOLL_WRITE, pages, NULL);
 		#endif
 		up_read(&current->mm->mmap_sem);
 		if (num_pages <= 0) {
@@ -1530,7 +1532,11 @@ static void __devexit fpga_remove(struct pci_dev *dev)
 // MODULE INIT/EXIT FUNCTIONS
 ///////////////////////////////////////////////////////
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,8,0)
 static DEFINE_PCI_DEVICE_TABLE(fpga_ids) = {
+#else
+static const struct pci_device_id fpga_ids[] = {
+#endif
 	{PCI_DEVICE(VENDOR_ID0, PCI_ANY_ID)},
 	{PCI_DEVICE(VENDOR_ID1, PCI_ANY_ID)},
 	{0},
