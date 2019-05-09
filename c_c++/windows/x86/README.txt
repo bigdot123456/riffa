@@ -1,8 +1,8 @@
 To build the C/C++ library:
 
-windres.exe riffa.rc resource.o
-gcc.exe -c -o riffa.o riffa.c -D RIFFA_EXPORTS
-gcc.exe -o riffa.dll riffa.o resource.o -s -shared -Wl,--subsystem,windows,--out-implib,riffa.lib -luser32 -lsetupapi
+windres.exe riffa.rc resource.o --target=pe-i386
+gcc.exe -c -o riffa.o riffa.c -D RIFFA_EXPORTS -m32
+gcc.exe -o riffa.dll riffa.o resource.o -s -shared -Wl,--subsystem,windows,--out-implib,riffa.lib -luser32 -lsetupapi -m32
 del riffa.lib
 gendef riffa.dll
 lib /def:riffa.def /machine:x86 /out:riffa.lib

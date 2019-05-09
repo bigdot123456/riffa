@@ -138,7 +138,7 @@ int RIFFACALL fpga_send(fpga_t * fpga, int chnl, void * data, int len,
 			// Wait for the IOCTL to complete and get the return value
 			WaitForSingleObject(evt, INFINITE);
 			status = GetOverlappedResult(fpga->dev, &overlapStruct,
-				&wordsReturned, FALSE);
+				&wordsReturned, TRUE);
 			if(!status) {
 				if (GetLastError() == ERROR_OPERATION_ABORTED)
 					printf("Operation timed out or was aborted\n");
@@ -150,6 +150,9 @@ int RIFFACALL fpga_send(fpga_t * fpga, int chnl, void * data, int len,
 			printf("Error in DeviceIoControl: %d\n", GetLastError());
 		}
 	}
+	if(evt != NULL)
+		CloseHandle(evt);
+
 	return wordsReturned;
 }
 
@@ -186,7 +189,7 @@ int RIFFACALL fpga_recv(fpga_t * fpga, int chnl, void * data, int len,
 			// Wait for the IOCTL to complete and get the return value
 			WaitForSingleObject(evt, INFINITE);
 			status = GetOverlappedResult(fpga->dev, &overlapStruct,
-				&wordsReturned, FALSE);
+				&wordsReturned, TRUE);
 			if(!status) {
 				if (GetLastError() == ERROR_OPERATION_ABORTED)
 					printf("Operation timed out or was aborted\n");
@@ -198,6 +201,9 @@ int RIFFACALL fpga_recv(fpga_t * fpga, int chnl, void * data, int len,
 			printf("Error in DeviceIoControl: %d\n", GetLastError());
 		}
 	}
+	if(evt != NULL)
+		CloseHandle(evt);
+
 	return wordsReturned;
 }
 
